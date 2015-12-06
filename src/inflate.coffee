@@ -183,8 +183,10 @@ module.exports = ->
 
         cov = getCoverage res
         logger.info 'Coverage with inflation is now %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
-        logger.info 'Happy coding!'
       .catch done
     ]
   , (err) ->
-    logger.error err if err?
+    if err?
+      logger.error err
+    else
+      logger.info 'Happy coding!'
