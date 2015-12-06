@@ -179,10 +179,9 @@ module.exports = ->
         if res.numberComponentErrors or res.numberTestErrors
           done 'Inflation deployment failed'
         else
+          cov = getCoverage res
+          logger.info 'Coverage with inflation is now %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
           done null, res
-
-        cov = getCoverage res
-        logger.info 'Coverage with inflation is now %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
       .catch done
     ]
   , (err) ->
