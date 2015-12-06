@@ -1,11 +1,55 @@
 {
-  "name": "auto-inflate",
-  "version": "1.0.0",
-  "description": "Inflate Salesforce test coverage",
+  "name": "force-coverage",
+  "version": "0.0.1",
+  "description": "Force.com test coverage tooling",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "force-coverage": "bin/force-coverage.js"
   },
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "inflate": "node ./index.js"
+  },
+  "author": "jdcrensh@gmail.com",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdcrensh/node-force-coverage.git"
+  },
+  "keywords": [
+    "sf",
+    "sforce",
+    "force",
+    "salesforce",
+    "force.com",
+    "migration",
+    "test",
+    "coverage",
+    "inflate",
+    "inflation"
+  ],
+  "bugs": {
+    "url": "https://github.com/jdcrensh/node-force-coverage/issues"
+  },
+  "homepage": "https://github.com/jdcrensh/node-force-coverage#readme",
+  "dependencies": {
+    "async": "^1.5.0",
+    "coffee-script": "^1.10.0",
+    "colors": "^1.1.2",
+    "fs-extra": "^0.26.2",
+    "jsforce": "^1.5.0",
+    "jsforce-metadata-tools": "^1.2.0",
+    "jstoxml": "^0.2.3",
+    "lodash": "^3.10.1",
+    "mustache": "^2.2.0",
+    "optimist": "^0.6.1",
+    "pretty-data": "^0.40.0",
+    "winston": "^2.1.1"
+  },
+  "devDependencies": {},
+  "coffeelintConfig": {
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
+  "apiVersion": "34.0"
 }
