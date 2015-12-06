@@ -8,7 +8,7 @@
 
 ## Coverage Auto-Inflation
 
-Disclaimer: Inflated coverage goes against Salesforce development best practices and should be avoided 99% of the time.
+*Disclaimer: Inflated coverage goes against Salesforce development best practices and should be avoided 99% of the time.*
 
     force-inflate -u <username> -p <password><security token>
 
