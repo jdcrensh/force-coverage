@@ -2,17 +2,20 @@
 
 [![npm version](https://img.shields.io/npm/v/force-coverage.svg?style=flat-square)](https://www.npmjs.com/package/force-coverage) [![Dependency Status](https://img.shields.io/david/jdcrensh/node-force-coverage.svg?style=flat-square)](https://david-dm.org/jdcrensh/node-force-coverage)
 
-Salesforce code coverage auto-inflation.
-
 ## Installation
 
     npm install -g force-coverage
 
-## Usage
+## Auto-Inflation
 
-### Inflation
-    force-coverage -u <username> -p <password><security token>
+Disclaimer: Coverage inflation goes against Salesforce development best practices and should be avoided 99% of the time.
 
-#### Target coverage
+    force-inflate -u <username> -p <password><security token>
 
-Defaults to 75%, can be configured using the command line option `--targetCoverage`, e.g. for 80%: `--targetCoverage 0.8`
+Runs org tests then calculates the number of remaining lines that must be covered to reach 75% overall coverage. This number is multiplied by four to give the lines of inflation that would be required instead. A class is generated--CoverageInflation.cls--containing the amount of inflation required, then deployed.
+
+### Target coverage
+
+Defaults to 75%, configurable with `--targetCoverage`
+
+    force-inflate ... --targetCoverage 0.8`

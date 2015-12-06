@@ -4,10 +4,7 @@
   "description": "Force.com test coverage tooling",
   "main": "index.js",
   "bin": {
-    "force-coverage": "bin/force-coverage.js"
-  },
-  "scripts": {
-    "inflate": "node ./index.js"
+    "force-inflate": "bin/inflate.js"
   },
   "author": "jdcrensh@gmail.com",
   "license": "ISC",
@@ -43,6 +40,7 @@
     "mustache": "^2.2.0",
     "optimist": "^0.6.1",
     "pretty-data": "^0.40.0",
+    "temp": "^0.8.3",
     "winston": "^2.1.1"
   },
   "devDependencies": {},
