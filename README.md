@@ -6,16 +6,20 @@
 
     npm install -g force-coverage
 
-## Auto-Inflation
+## Coverage Auto-Inflation
 
-Disclaimer: Coverage inflation goes against Salesforce development best practices and should be avoided 99% of the time.
+Disclaimer: Inflated coverage goes against Salesforce development best practices and should be avoided 99% of the time.
 
     force-inflate -u <username> -p <password><security token>
 
-Runs org tests then calculates the number of remaining lines that must be covered to reach 75% overall coverage. This number is multiplied by four to give the lines of inflation that would be required instead. A class is generated--CoverageInflation.cls--containing the amount of inflation required, then deployed.
+Run org tests and calculates the remaining lines that must otherwise be covered to reach 75% overall coverage. This number is multiplied by four, giving us the lines of inflation required. `CoverageInflation.cls` is generated to contain the inflation, which is then deployed.
+
+If overall coverage exceeds 75% without generated inflation, `CoverageInflation.cls` is removed from the org.
+
+Re-run as needed (i.e. when **actual** coverage increases) to regenerate, or eliminate, the inflation code.
 
 ### Target coverage
 
-Defaults to 75%, configurable with `--targetCoverage`
+Defaults to 75%; configurable with `--targetCoverage`
 
     force-inflate ... --targetCoverage 0.8`
