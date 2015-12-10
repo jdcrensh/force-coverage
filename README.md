@@ -14,8 +14,9 @@
 
 Run org tests and calculates the remaining lines that must otherwise be covered to reach target % overall coverage. `CoverageInflation` is generated to contain the calculated amount of inflation, which is then deployed. The class is compiled against API v27.0 so that it may contain its own test method.
 
-Inflated lines formula:
-    (linesCovered - totalLines * targetPercentage) / (target - 1)
+Inflation formula:
+
+    (linesCovered - totalLines * targetPercentage) / (targetPercentage - 1) = inflatedLines
 
 Re-run as needed (i.e. when **actual** coverage increases) to decrease/eliminate the inflation.
 
