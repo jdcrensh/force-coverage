@@ -12,14 +12,29 @@
 
     force-inflate -u <username> -p <password><security token>
 
-Run org tests and calculates the remaining lines that must otherwise be covered to reach 75% overall coverage. This number is multiplied by four, giving us the lines of inflation required. `CoverageInflation.cls` is generated to contain the inflation, which is then deployed.
+Run org tests and calculates the remaining lines that must otherwise be covered to reach target % overall coverage. `CoverageInflation` is generated to contain the calculated amount of inflation, which is then deployed. The class is compiled against API v27.0 so that it may contain its own test method.
 
-If overall coverage exceeds 75% without generated inflation, `CoverageInflation.cls` is removed from the org.
+Inflated lines formula:
+    (linesCovered - totalLines * targetPercentage) / (target - 1)
 
-Re-run as needed (i.e. when **actual** coverage increases) to regenerate, or eliminate, the inflation code.
+Re-run as needed (i.e. when **actual** coverage increases) to decrease/eliminate the inflation.
 
-### Target coverage
+When overall coverage exceeds the target % without inflation, `CoverageInflation` is removed from the org.
 
-Defaults to 75%; configurable with `--targetCoverage`
+### Target coverage %
 
-    force-inflate ... --targetCoverage 0.8`
+    force-inflate ... --target 0.8
+
+Default: 0.76
+
+### Inflation class name
+
+Inflation can be divided among multiple classes. This can be useful in cases where the target % is unattainable due to the Apex class size limit of 100,000 characters.
+
+Example for a target of 90% coverage:
+
+    force-inflate ... --target 0.3 --class CoverageInflation1
+    force-inflate ... --target 0.3 --class CoverageInflation2
+    force-inflate ... --target 0.3 --class CoverageInflation3
+
+Default: `CoverageInflation`

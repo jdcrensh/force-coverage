@@ -12,8 +12,6 @@ temp = require('temp').track()
 
 require('./lodash')(_)
 
-coverageClassName = 'CoverageInflation'
-
 deployOpts =
   checkOnly: true
   rollbackOnError: true
@@ -22,32 +20,46 @@ deployOpts =
   username: argv.u
   password: argv.p
   loginUrl: argv.loginurl
-  pollTimeout: 600 * 1000
-  pollInterval: 5 * 1000
+  pollTimeout: argv.pollTimeout
+  pollInterval: argv.pollInterval
 
 conn = new sf.Connection loginUrl: argv.loginurl
 
-getCoverage = (deployResult) ->
+Number::ceil = -> Math.ceil this
+Number::max = (n) -> Math.max n, this
+
+numInflationNeeded = (a, b, c) ->
+  x = (a - b * c) / (c - 1)
+  x.max(0).ceil()
+
+numCoverageMissing = (a, b, c) ->
+  x = b * c - a
+  x.max(0).ceil()
+
+percentLinesCovered = (a, b) ->
+  parseFloat(a / b * 100).toFixed 2
+
+coverageDetails = (deployResult) ->
   coverage = deployResult.details.runTestResult.codeCoverage
+
   totalLines = _.sum coverage, 'numLocations'
   linesNotCovered = _.sum coverage, 'numLocationsNotCovered'
-
   linesCovered = totalLines - linesNotCovered
-  coveragePercent = parseFloat(linesCovered / totalLines * 100).toFixed 2
 
-  targetLineCoverage = Math.ceil totalLines * argv.targetCoverage
-  coverageRequired = Math.max 0, targetLineCoverage - linesCovered
+  coveragePercent = percentLinesCovered linesCovered, totalLines
+  coverageMissing = numCoverageMissing linesCovered, totalLines, argv.target
+  inflationRequired = numInflationNeeded linesCovered, totalLines, argv.target
 
-  inflationRequired = coverageRequired * 4
+  targetPercentCoverage = parseFloat(argv.target * 100).toFixed 2
 
   return {
     totalLines
-    linesCovered
     linesNotCovered
+    linesCovered
     coveragePercent
-    targetLineCoverage
-    coverageRequired
+    coverageMissing
     inflationRequired
+    targetPercentCoverage
   }
 
 JSON.stringifyCircular = (obj, indent) ->
@@ -76,19 +88,18 @@ module.exports = ->
 
     pkgTestsDestruct: ['pkgDir', (done, res) ->
       dest = path.join res.pkgDir, 'destructiveChanges.xml'
-      xml.writePackage ApexClass: [coverageClassName], dest, done
+      xml.writePackage ApexClass: [argv.class], dest, done
     ]
 
     runTests: ['pkgTests', 'pkgTestsDestruct', (done, res) ->
       logger.info 'Running tests asynchronously...'
-      # res = fs.readJsonSync 'results.json'
-      # return async.setImmediate -> done null, res
+
       tooling.deployFromDirectory(res.pkgDir, deployOpts).then (res) ->
-        logger.info ''
         if argv.logLevel is 'verbose'
           tooling.reportDeployResult res, logger, true
+
         resJson = JSON.stringifyCircular res, '  '
-        # fs.writeFileSync 'results.json', resJson
+
         if res.numberComponentErrors or res.numberTestErrors
           done "Test phase failed"
         else
@@ -110,13 +121,15 @@ module.exports = ->
         logger.warn res.checkRequireCoverage.warning
 
       logger.info 'Calculating additional coverage required...'
-      cov = getCoverage res.runTests
+      cov = coverageDetails res.runTests
       logger.info 'Code coverage from tests: %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
 
-      if not cov.coverageRequired
+      if not cov.inflationRequired
         logger.info 'Inflation is not needed! Keep it up!'
       else
-        logger.warn 'Overall coverage is %s lines short of %d%%', cov.coverageRequired, parseInt argv.targetCoverage * 100
+        logger.warn 'Overall coverage is %d lines short of %d%%', cov.coverageMissing, cov.targetPercentCoverage
+        logger.warn '%d lines of inflation is needed for the target to be met', cov.inflationRequired
+        logger.verbose '(%d - %d * %d) / (%d - 1) = %d', cov.linesCovered, cov.totalLines, argv.target, argv.target, cov.inflationRequired
 
       async.setImmediate -> done null, cov
     ]
@@ -126,15 +139,15 @@ module.exports = ->
       return async.setImmediate done if inflationRequired
       conn = res.login
       logger.warn 'Removing existing inflation...'
-      conn.metadata.delete 'ApexClass', ['CoverageInflation'], _.ary done, 0
+      conn.metadata.delete 'ApexClass', [argv.class], _.ary done, 0
     ]
 
     inflationClass: ['parseCoverage', (done, res) ->
-      {inflationRequired} = res.parseCoverage
-      return async.setImmediate done unless inflationRequired
+      lines = res.parseCoverage.inflationRequired
+      return async.setImmediate done unless lines
 
-      n = Math.ceil inflationRequired / 100
-      logger.info "Generating #{n * 100} lines of inflation..."
+      blocks = Math.ceil lines / 100
+      logger.info "Generating #{blocks * 100} lines of inflation..."
 
       pkg = res.pkgDir
       async.waterfall [
@@ -142,7 +155,7 @@ module.exports = ->
           temp.cleanup _.ary done, 1
 
         (done) ->
-          fp = path.join pkg, 'classes', "#{coverageClassName}.cls-meta.xml"
+          fp = path.join pkg, 'classes', "#{argv.class}.cls-meta.xml"
           xml.writeMetaXml 'ApexClass', fp, version: '27.0', _.ary done, 1
 
         (done) ->
@@ -150,13 +163,13 @@ module.exports = ->
           fs.readFile fp, 'utf-8', done
 
         (res, done) ->
-          fp = path.join pkg, 'classes', "#{coverageClassName}.cls"
-          content = Mustache.render res, inflation: (i for i in [1..n])
+          fp = path.join pkg, 'classes', "#{argv.class}.cls"
+          content = Mustache.render res, inflation: (i for i in [1..blocks])
           fs.writeFile fp, content, _.ary done, 1
 
         (done) ->
           fp = path.join pkg, 'package.xml'
-          components = ApexClass: [coverageClassName]
+          components = ApexClass: [argv.class]
           xml.writePackage components, fp, _.ary done, 1
       ], done
     ]
@@ -178,7 +191,7 @@ module.exports = ->
         if res.numberComponentErrors or res.numberTestErrors
           done 'Inflation deployment failed'
         else
-          cov = getCoverage res
+          cov = coverageDetails res
           logger.info 'Coverage with inflation is now %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
           done null, res
       .catch done

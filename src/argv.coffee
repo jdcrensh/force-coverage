@@ -1,26 +1,44 @@
 {apiVersion} = require '../package.json'
+logger = require './logger'
+yargs = require 'yargs'
 
-argv = require 'yargs'
+argv = yargs
   .usage 'Usage: $0 [options]'
   .help 'help'
   .default
-    'loginurl': 'https://test.salesforce.com'
-    'logLevel': 'info'
-    'version': apiVersion
-    'targetCoverage': 0.75
-  .demand ['u', 'p']
+    loginurl: 'https://test.salesforce.com'
+    version: apiVersion
+    target: 0.76
+    class: 'CoverageInflation'
+    pollTimeout: 600 * 1000
+    pollInterval: 5 * 1000
+  .demand ['username', 'password']
+  .count 'verbose'
   .alias
-    'u': 'username'
-    'p': 'password'
+    l: 'loginurl'
+    u: 'username'
+    p: 'password'
+    v: 'verbose'
   .describe
-    'loginurl': 'Login URL'
-    'u': 'Username'
-    'p': 'Password + Security Token'
-    'version': 'Package version'
-    'logLevel': 'Sets node logging level'
-    'targetCoverage': 'Percent coverage required'
+    loginurl: 'Login URL'
+    username: 'Username'
+    password: 'Password + Security Token'
+    version: 'Package version'
+    verbose: 'Sets node logging level'
+    class: 'Change the default coverage class name'
+    target: 'Percent coverage required (0.01-0.99)'
+  .wrap yargs.terminalWidth()
   .argv
 
-argv.targetCoverage = Math.max 0.75, Math.min argv.targetCoverage, 1.0
+if 0.01 < argv.targetCoverage < 0.99
+  argv.targetCoverage = Math.max 0.01, Math.min 0.99, argv.targetCoverage
+  logger.warn 'Adjusted target coverage to %d. Valid range is 0.01-0.99.', argv.targetCoverage
+
+argv.logLevel = switch argv.verbose
+  when 0 then 'info'
+  when 1 then 'verbose'
+  when 2 then 'debug'
+  when 3 then 'silly'
+  else 'info'
 
 module.exports = argv
