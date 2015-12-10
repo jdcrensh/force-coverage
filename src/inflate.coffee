@@ -156,7 +156,6 @@ module.exports = ->
 
         (done) ->
           fp = path.join pkg, 'package.xml'
-          {version} = argv
           components = ApexClass: [coverageClassName]
           xml.writePackage components, fp, _.ary done, 1
       ], done

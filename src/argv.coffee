@@ -1,7 +1,8 @@
 {apiVersion} = require '../package.json'
 
-argv = require 'optimist'
+argv = require 'yargs'
   .usage 'Usage: $0 [options]'
+  .help 'help'
   .default
     'loginurl': 'https://test.salesforce.com'
     'logLevel': 'info'
