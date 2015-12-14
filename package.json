@@ -37,7 +37,7 @@
     "jsforce-metadata-tools": "^1.2.0",
     "jstoxml": "^0.2.3",
     "lodash": "^3.10.1",
-    "mustache": "^2.2.0",
+    "mustache": "^2.2.1",
     "pretty-data": "^0.40.0",
     "temp": "^0.8.3",
     "winston": "^2.1.1",
