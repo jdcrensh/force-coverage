@@ -1,6 +1,8 @@
 # Force.com test coverage tooling
 
 [![npm version](https://img.shields.io/npm/v/force-coverage.svg?style=flat-square)](https://www.npmjs.com/package/force-coverage) [![Dependency Status](https://img.shields.io/david/jdcrensh/node-force-coverage.svg?style=flat-square)](https://david-dm.org/jdcrensh/node-force-coverage)
+[![Coverage Status](https://coveralls.io/repos/jdcrensh/node-force-coverage/badge.svg?branch=master&service=github)](https://coveralls.io/github/jdcrensh/node-force-coverage?branch=master)
+[![Build Status](https://travis-ci.org/jdcrensh/node-force-coverage.svg?branch=master)](https://travis-ci.org/jdcrensh/node-force-coverage)
 
 ## Installation
 

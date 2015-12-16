@@ -7,7 +7,7 @@
     "force-inflate": "bin/inflate.js"
   },
   "scripts": {
-    "test": "mocha && istanbul report text-summary lcov"
+    "test": "mocha && istanbul report text-summary lcov && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "author": "jdcrensh@gmail.com",
   "license": "ISC",
@@ -49,6 +49,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "coffee-coverage": "^0.7.0",
+    "coveralls": "^2.11.6",
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4"
   },

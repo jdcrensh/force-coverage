@@ -7,6 +7,7 @@ chai.should()
 describe 'argv', ->
 
   describe 'when credentials are not provided', ->
+    @timeout 10000
 
     it 'throws with neither username nor password', ->
       yargs [], true
