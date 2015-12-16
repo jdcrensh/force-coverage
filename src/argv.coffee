@@ -30,15 +30,21 @@ argv = yargs
   .wrap yargs.terminalWidth()
   .argv
 
-if 0.01 < argv.targetCoverage < 0.99
-  argv.targetCoverage = Math.max 0.01, Math.min 0.99, argv.targetCoverage
-  logger.warn 'Adjusted target coverage to %d. Valid range is 0.01-0.99.', argv.targetCoverage
+constrainTargetCoverage = (argv) ->
+  if 0.01 < argv.targetCoverage < 0.99
+    argv.targetCoverage = Math.max 0.01, Math.min 0.99, argv.targetCoverage
+    logger.warn 'Adjusted target coverage to %d. Valid range is 0.01-0.99.', argv.targetCoverage
 
-argv.logLevel = switch argv.verbose
-  when 0 then 'info'
-  when 1 then 'verbose'
-  when 2 then 'debug'
-  when 3 then 'silly'
-  else 'info'
+setLogLevel = (argv) ->
+  argv.logLevel = switch argv.verbose
+    when 0 then 'info'
+    when 1 then 'verbose'
+    when 2 then 'debug'
+    when 3 then 'silly'
+    else 'info'
+
+# post-init
+constrainTargetCoverage argv
+setLogLevel argv
 
 module.exports = argv

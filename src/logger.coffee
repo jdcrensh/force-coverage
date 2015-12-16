@@ -3,7 +3,6 @@ winston = require 'winston'
 argv = require './argv'
 
 winston.emitErrs = true
-
 winston.cli()
 
 logger = new winston.Logger
@@ -19,12 +18,11 @@ logger = new winston.Logger
   exitOnError: true
 
 logger.cli()
-
 logger.setLevels error: 0, warn: 1, info: 2, verbose: 3, debug: 4, silly: 5
 
 logger.log = _.wrap logger.log, (fn, args...) ->
   [level] = args
-  if not logger.levels[level]?
+  unless logger.levels[level]?
     args.unshift 'info'
   fn.apply logger, args
 

@@ -1,78 +1,36 @@
-async = require 'async'
 _ = require 'lodash'
+async = require 'async'
 fs = require 'fs-extra'
 sf = require 'jsforce'
 tooling = require 'jsforce-metadata-tools'
 xml = require './xml'
 logger = require './logger'
 argv = require './argv'
+Coverage = require './coverage'
 path = require 'path'
 Mustache = require 'mustache'
 temp = require('temp').track()
 
-require('./lodash')(_)
+# keep jsforce connection reference
+conn = null
 
-deployOpts =
-  checkOnly: true
-  rollbackOnError: true
-  testLevel: 'RunLocalTests'
-  ignoreWarnings: true
-  username: argv.u
-  password: argv.p
-  loginUrl: argv.loginurl
-  pollTimeout: argv.pollTimeout
-  pollInterval: argv.pollInterval
+getDeployOpts = (extend={}) ->
+  _.extend
+    checkOnly: true
+    rollbackOnError: true
+    testLevel: 'RunLocalTests'
+    ignoreWarnings: true
+    username: argv.u
+    password: argv.p
+    loginUrl: argv.loginurl
+    pollTimeout: argv.pollTimeout
+    pollInterval: argv.pollInterval
+  , extend
 
-conn = new sf.Connection loginUrl: argv.loginurl
-
-Number::ceil = -> Math.ceil this
-Number::max = (n) -> Math.max n, this
-
-numInflationNeeded = (a, b, c) ->
-  x = (a - b * c) / (c - 1)
-  x.max(0).ceil()
-
-numCoverageMissing = (a, b, c) ->
-  x = b * c - a
-  x.max(0).ceil()
-
-percentLinesCovered = (a, b) ->
-  parseFloat(a / b * 100).toFixed 2
-
-coverageDetails = (deployResult) ->
-  coverage = deployResult.details.runTestResult.codeCoverage
-
-  totalLines = _.sum coverage, 'numLocations'
-  linesNotCovered = _.sum coverage, 'numLocationsNotCovered'
-  linesCovered = totalLines - linesNotCovered
-
-  coveragePercent = percentLinesCovered linesCovered, totalLines
-  coverageMissing = numCoverageMissing linesCovered, totalLines, argv.target
-  inflationRequired = numInflationNeeded linesCovered, totalLines, argv.target
-
-  targetPercentCoverage = parseFloat(argv.target * 100).toFixed 2
-
-  return {
-    totalLines
-    linesNotCovered
-    linesCovered
-    coveragePercent
-    coverageMissing
-    inflationRequired
-    targetPercentCoverage
-  }
-
-JSON.stringifyCircular = (obj, indent) ->
-  cache = []
-  JSON.stringify obj, (key, value) ->
-    return if !!~cache.indexOf value
-    cache.push value if _.isObject value
-    value
-  , indent
-
-module.exports = ->
+run = ->
   async.auto
     login: (done) ->
+      conn = new sf.Connection loginUrl: argv.loginurl
       conn.login argv.u, argv.p, (err) ->
         done err, conn
 
@@ -94,7 +52,7 @@ module.exports = ->
     runTests: ['pkgTests', 'pkgTestsDestruct', (done, res) ->
       logger.info 'Running tests asynchronously...'
 
-      tooling.deployFromDirectory(res.pkgDir, deployOpts).then (res) ->
+      tooling.deployFromDirectory(res.pkgDir, getDeployOpts()).then (res) ->
         if argv.logLevel is 'verbose'
           tooling.reportDeployResult res, logger, true
 
@@ -107,31 +65,10 @@ module.exports = ->
       .catch done
     ]
 
-    checkRequireCoverage: ['runTests', (done, res) ->
-      warning = res.runTests.details.runTestResult.codeCoverageWarnings?.message
-      async.setImmediate -> done null, {warning}
-    ]
-
-    isCoverageRequired: ['checkRequireCoverage', (done, res) ->
-      async.setImmediate -> done null, res.checkRequireCoverage.warning?
-    ]
-
-    parseCoverage: ['isCoverageRequired', (done, res) ->
-      if res.isCoverageRequired # received coverage warning?
-        logger.warn res.checkRequireCoverage.warning
-
-      logger.info 'Calculating additional coverage required...'
-      cov = coverageDetails res.runTests
-      logger.info 'Code coverage from tests: %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
-
-      if not cov.inflationRequired
-        logger.info 'Inflation is not needed! Keep it up!'
-      else
-        logger.warn 'Overall coverage is %d lines short of %d%%', cov.coverageMissing, cov.targetPercentCoverage
-        logger.warn '%d lines of inflation is needed for the target to be met', cov.inflationRequired
-        logger.verbose '(%d - %d * %d) / (%d - 1) = %d', cov.linesCovered, cov.totalLines, argv.target, argv.target, cov.inflationRequired
-
-      async.setImmediate -> done null, cov
+    parseCoverage: ['runTests', (done, res) ->
+      coverage = new Coverage(res.runTests, logger, argv)
+      coverage.log()
+      async.setImmediate -> done null, coverage
     ]
 
     removeInflation: ['parseCoverage', (done, res) ->
@@ -181,7 +118,7 @@ module.exports = ->
 
       logger.info 'Deploying inflation...'
 
-      opts = _.extend deployOpts, checkOnly: false
+      opts = getDeployOpts checkOnly: false
       tooling.deployFromDirectory(pkg, opts).then (res) ->
         logger.info ''
         if argv.logLevel is 'verbose'
@@ -191,7 +128,7 @@ module.exports = ->
         if res.numberComponentErrors or res.numberTestErrors
           done 'Inflation deployment failed'
         else
-          cov = coverageDetails res
+          cov = new Coverage(res, logger, argv)
           logger.info 'Coverage with inflation is now %d/%d (%d%%)', cov.linesCovered, cov.totalLines, cov.coveragePercent
           done null, res
       .catch done
@@ -201,3 +138,5 @@ module.exports = ->
       logger.error err
     else
       logger.info 'Happy coding!'
+
+module.exports = {run}

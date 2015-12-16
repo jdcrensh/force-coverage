@@ -6,6 +6,9 @@
   "bin": {
     "force-inflate": "bin/inflate.js"
   },
+  "scripts": {
+    "test": "mocha && istanbul report text-summary lcov"
+  },
   "author": "jdcrensh@gmail.com",
   "license": "ISC",
   "repository": {
@@ -43,7 +46,12 @@
     "winston": "^2.1.1",
     "yargs": "^3.31.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "coffee-coverage": "^0.7.0",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4"
+  },
   "coffeelintConfig": {
     "max_line_length": {
       "level": "ignore"
