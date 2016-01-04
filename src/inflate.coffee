@@ -96,7 +96,7 @@ run = ->
           xml.writeMetaXml 'ApexClass', fp, version: '27.0', _.ary done, 1
 
         (done) ->
-          fp = path.join 'templates', 'CoverageInflation.cls.tmpl'
+          fp = path.join __dirname, '..', 'templates', 'CoverageInflation.cls.tmpl'
           fs.readFile fp, 'utf-8', done
 
         (res, done) ->
