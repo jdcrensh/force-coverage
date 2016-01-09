@@ -80,11 +80,10 @@ run = ->
     ]
 
     inflationClass: ['parseCoverage', (done, res) ->
-      lines = res.parseCoverage.inflationRequired
-      return async.setImmediate done unless lines
+      coverage = res.parseCoverage
+      return async.setImmediate done unless coverage.blocksNeeded
 
-      blocks = Math.ceil lines / 100
-      logger.info "Generating #{blocks * 100} lines of inflation..."
+      logger.info "Generating #{coverage.blocksNeeded * 100} lines of inflation..."
 
       pkg = res.pkgDir
       async.waterfall [
@@ -101,7 +100,13 @@ run = ->
 
         (res, done) ->
           fp = path.join pkg, 'classes', "#{argv.class}.cls"
-          content = Mustache.render res, inflation: (i for i in [1..blocks])
+          data =
+            date: new Date()
+            stats: coverage
+            inflation: (i for i in [1..coverage.blocksNeeded])
+          data.stats.inflationGenerated = coverage.blocksNeeded * 100
+          content = Mustache.render res, data
+          logger.log content
           fs.writeFile fp, content, _.ary done, 1
 
         (done) ->

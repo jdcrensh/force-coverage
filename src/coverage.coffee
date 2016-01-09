@@ -19,6 +19,7 @@ class Coverage
     @inflationRequired = @inflationNeeded().max(0).ceil()
 
     @targetPercentCoverage = parseFloat(@argv.target * 100).toFixed 2
+    @blocksNeeded = Math.ceil @inflationRequired / 100
 
   coverageWarning: (deployResult) ->
     deployResult.details.runTestResult.codeCoverageWarnings?.message
