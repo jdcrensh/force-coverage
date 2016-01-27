@@ -106,7 +106,6 @@ run = ->
             inflation: (i for i in [1..coverage.blocksNeeded])
           data.stats.inflationGenerated = coverage.blocksNeeded * 100
           content = Mustache.render res, data
-          logger.log content
           fs.writeFile fp, content, _.ary done, 1
 
         (done) ->

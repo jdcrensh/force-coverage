@@ -31,9 +31,9 @@ argv = yargs
   .argv
 
 constrainTargetCoverage = (argv) ->
-  if 0.01 < argv.targetCoverage < 0.99
-    argv.targetCoverage = Math.max 0.01, Math.min 0.99, argv.targetCoverage
-    logger.warn 'Adjusted target coverage to %d. Valid range is 0.01-0.99.', argv.targetCoverage
+  if 0.76 < argv.targetCoverage < 0.99
+    argv.targetCoverage = Math.max 0.76, Math.min 0.99, argv.targetCoverage
+    logger.warn 'Adjusted target coverage to %d. Valid range is 0.76-0.99.', argv.targetCoverage
 
 setLogLevel = (argv) ->
   argv.logLevel = switch argv.verbose
