@@ -44,7 +44,7 @@
     "pretty-data": "^0.40.0",
     "temp": "^0.8.3",
     "winston": "^2.1.1",
-    "yargs": "^3.31.0"
+    "yargs": "^4.1.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",
