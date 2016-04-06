@@ -50,7 +50,7 @@
     "chai": "^3.4.1",
     "coffee-coverage": "^1.0.0",
     "coveralls": "^2.11.6",
-    "istanbul": "^0.4.1",
+    "istanbul": "^0.4.3",
     "mocha": "^2.3.4"
   },
   "coffeelintConfig": {
