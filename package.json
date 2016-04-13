@@ -1,6 +1,6 @@
 {
   "name": "force-coverage",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Force.com test coverage tooling",
   "main": "index.js",
   "bin": {
