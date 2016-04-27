@@ -7,17 +7,17 @@
     "force-inflate": "bin/inflate.js"
   },
   "scripts": {
-    "test": "mocha && istanbul report text-summary lcov && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "test": "mocha && istanbul report text-summary lcov"
   },
-  "author": "jdcrensh@gmail.com",
-  "license": "ISC",
+  "author": "jon@redteal.com",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jdcrensh/node-force-coverage.git"
+    "url": "git+https://github.com/redteal/node-force-coverage.git"
   },
-  "homepage": "https://github.com/jdcrensh/node-force-coverage#readme",
+  "homepage": "https://github.com/redteal/node-force-coverage#readme",
   "bugs": {
-    "url": "https://github.com/jdcrensh/node-force-coverage/issues"
+    "url": "https://github.com/redteal/node-force-coverage/issues"
   },
   "keywords": [
     "sf",
@@ -33,11 +33,11 @@
     "inflation"
   ],
   "dependencies": {
-    "async": "^1.5.0",
+    "async": "^2.0.0-rc.3",
     "coffee-script": "^1.10.0",
-    "fs-extra": "^0.28.0",
-    "jsforce": "^1.5.0",
-    "jsforce-metadata-tools": "^1.2.0",
+    "fs-extra": "^0.29.0",
+    "jsforce": "^1.6.1",
+    "jsforce-metadata-tools": "^1.2.2",
     "jstoxml": "^0.2.3",
     "lodash": "^4.8.2",
     "mustache": "^2.2.1",
@@ -47,11 +47,11 @@
     "yargs": "^4.1.0"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
+    "chai": "^3.5.0",
     "coffee-coverage": "^1.0.0",
-    "coveralls": "^2.11.6",
+    "coveralls": "^2.11.9",
     "istanbul": "^0.4.3",
-    "mocha": "^2.3.4"
+    "mocha": "^2.4.5"
   },
   "coffeelintConfig": {
     "max_line_length": {

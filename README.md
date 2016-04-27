@@ -1,9 +1,9 @@
 # Force.com test coverage tooling
 
 [![npm version](https://img.shields.io/npm/v/force-coverage.svg)](https://www.npmjs.com/package/force-coverage)
-[![Dependency Status](https://img.shields.io/david/jdcrensh/node-force-coverage.svg)](https://david-dm.org/jdcrensh/node-force-coverage)
-[![Coverage Status](https://coveralls.io/repos/jdcrensh/node-force-coverage/badge.svg?branch=master&service=github)](https://coveralls.io/github/jdcrensh/node-force-coverage?branch=master)
-[![Build Status](https://travis-ci.org/jdcrensh/node-force-coverage.svg?branch=master)](https://travis-ci.org/jdcrensh/node-force-coverage)
+[![Dependency Status](https://img.shields.io/david/redteal/node-force-coverage.svg)](https://david-dm.org/redteal/node-force-coverage)
+[![Coverage Status](https://coveralls.io/repos/github/redteal/node-force-coverage/badge.svg?branch=master)](https://coveralls.io/github/redteal/node-force-coverage?branch=master)
+[![Build Status](https://travis-ci.org/redteal/node-force-coverage.svg?branch=master)](https://travis-ci.org/redteal/node-force-coverage)
 [![Project Status: Inactive - The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)
 
 ## Installation
