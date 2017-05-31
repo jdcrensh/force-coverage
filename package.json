@@ -33,25 +33,25 @@
     "inflation"
   ],
   "dependencies": {
-    "async": "^2.0.0-rc.4",
-    "coffee-script": "^1.10.0",
-    "fs-extra": "^0.30.0",
-    "jsforce": "^1.6.3",
-    "jsforce-metadata-tools": "^1.2.2",
-    "jstoxml": "^0.2.3",
-    "lodash": "^4.12.0",
-    "mustache": "^2.2.1",
-    "pretty-data": "^0.40.0",
-    "temp": "^0.8.3",
-    "winston": "^2.2.0",
-    "yargs": "^4.7.0"
+    "async": "1.5.2",
+    "coffee-script": "1.10.0",
+    "fs-extra": "0.30.0",
+    "jsforce": "1.6.3",
+    "jsforce-metadata-tools": "1.2.2",
+    "jstoxml": "0.2.3",
+    "lodash": "4.12.0",
+    "mustache": "2.2.1",
+    "pretty-data": "0.40.0",
+    "temp": "0.8.3",
+    "winston": "2.2.0",
+    "yargs": "4.7.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "coffee-coverage": "^1.0.1",
-    "coveralls": "^2.11.9",
-    "istanbul": "^0.4.3",
-    "mocha": "^2.4.5"
+    "chai": "3.5.0",
+    "coffee-coverage": "1.0.1",
+    "coveralls": "2.11.9",
+    "istanbul": "0.4.3",
+    "mocha": "2.4.5"
   },
   "coffeelintConfig": {
     "max_line_length": {
